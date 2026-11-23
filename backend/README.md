@@ -60,6 +60,7 @@ Tracing goes to LangSmith when the `LANGSMITH_*` settings are in `.env`. Tests s
 
 ```
 powershell -File deploy\push-image.ps1          # build the image here, push to ECR as :latest
+powershell -File deploy\push-secrets.ps1        # upload backend\.env to Parameter Store (re-run after every .env change)
 powershell -File deploy\stack-up.ps1            # one-time: create the box, API, k3s, Fission, welcome function
 powershell -File deploy\orchestrator-setup.ps1  # one-time: Step Functions state machine behind demo-up/down
 powershell -File deploy\demo-down.ps1           # stop the box (saves money)
@@ -68,4 +69,5 @@ powershell -File deploy\measure-cold-start.ps1 -Ip <ip>   # cold vs warm timings
 ```
 
 The public IP changes on every start, `demo-up` prints it. Fission function: `POST http://<ip>:31314/welcome` with `X-API-Key` and `{"name": "Asha", "role": "developer"}`.
+The box never gets `.env` copied to it. At every boot it fetches the encrypted Parameter Store value `/upskilling-p2/onboarding-buddy/env` (Docker's `.env` and the Fission secret). After changing `backend\.env`, run `push-secrets.ps1` and the next `demo-up` uses the new values.
 Don't re-save `backend\.env` with PowerShell `Set-Content -Encoding utf8` (it adds a hidden BOM that breaks the Kubernetes secret). Use an editor, or `[IO.File]::WriteAllText` with `UTF8Encoding($false)`.

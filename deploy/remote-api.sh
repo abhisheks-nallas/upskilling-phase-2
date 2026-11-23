@@ -12,7 +12,6 @@ fi
 
 sudo dnf install -y -q docker
 sudo systemctl enable --now docker
-mkdir -p app && mv api.env app/.env && chmod 600 app/.env
 aws ecr get-login-password --region $REGION | sudo docker login --username AWS --password-stdin "$ACCOUNT.dkr.ecr.$REGION.amazonaws.com" >/dev/null
 sudo docker pull -q "$IMAGE"
 sudo docker rm -f buddy 2>/dev/null || true

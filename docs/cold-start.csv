@@ -14,3 +14,5 @@ timestamp_utc,kind,call,total_seconds,handler_seconds,pod_call_number,source
 2026-11-23T10:06:21,cold,1,1.45,0.49,1,groq
 2026-11-23T10:06:22,warm,1,1.16,0.39,2,groq
 2026-11-23T10:06:23,warm,2,1.25,0.48,3,groq
+2026-11-23T10:41:01,cold,1,1.33,0.44,1,groq
+2026-11-23T10:41:02,warm,1,1.16,0.4,2,groq

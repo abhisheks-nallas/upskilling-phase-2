@@ -1,6 +1,6 @@
 # Creates the demo box: one c7i-flex.large in Sydney that runs the API (Docker, image pulled from ECR), and later k3s + Fission.
 # Run:  powershell -File deploy\stack-up.ps1      (push the image first: deploy\push-image.ps1)
-# Needs: AWS CLI, ssh/scp (Windows 10+), backend\.env. Firewall is open only to your current IP.
+# Needs: AWS CLI, ssh/scp (Windows 10+), backend\.env (uploaded to Parameter Store, see push-secrets.ps1). Firewall is open only to your current IP.
 # shortcut: one box for everything, no HTTPS. Split the API out and add TLS before real users.
 $ErrorActionPreference = "Stop"
 $Region = "ap-southeast-2"
@@ -38,9 +38,10 @@ Invoke-Aws ec2 wait instance-status-ok --instance-ids $id
 $ip = Invoke-Aws ec2 describe-instances --instance-ids $id --query "Reservations[0].Instances[0].PublicIpAddress" --output text
 
 $ssh = @("-i", $Pem, "-o", "StrictHostKeyChecking=accept-new", "-o", "LogLevel=ERROR")
-scp @ssh (Join-Path $Root "backend\.env") "ec2-user@${ip}:/home/ec2-user/api.env"
-scp @ssh (Join-Path $PSScriptRoot "remote-api.sh") "ec2-user@${ip}:/home/ec2-user/remote-api.sh"
-ssh @ssh "ec2-user@$ip" "bash remote-api.sh"
+# secrets live in Parameter Store: upload backend\.env there, the box fetches it at every boot
+& (Join-Path $PSScriptRoot "push-secrets.ps1")
+scp @ssh (Join-Path $PSScriptRoot "remote-secrets.sh") (Join-Path $PSScriptRoot "remote-api.sh") "ec2-user@${ip}:/home/ec2-user/"
+ssh @ssh "ec2-user@$ip" "sed -i 's/\r$//' remote-secrets.sh remote-api.sh && bash remote-secrets.sh && bash remote-api.sh"
 if ($LASTEXITCODE -ne 0) { throw "API setup failed" }
 
 # k3s + Fission + the welcome function

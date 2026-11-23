@@ -31,5 +31,8 @@ One c7i-flex.large (4 GB, free-plan eligible) in Sydney runs the API in Docker a
 - 4 GB is enough today (2 GB of it free). Heavier models or more functions may need m7i-flex.large.
 - k3s and Helm are installed from their official install scripts at stack-up time (not pinned for k3s).
 
+## Secrets
+Secrets are one SecureString in Parameter Store, fetched by the box at every boot. Parameter Store over Secrets Manager because it is free; Secrets Manager costs about $0.40 per secret per month and adds rotation, which this demo does not need.
+
 ## Dependencies
 - ADR-001 (Groq via LiteLLM). IAM roles for ECR pull and for the state machine, created in the account.

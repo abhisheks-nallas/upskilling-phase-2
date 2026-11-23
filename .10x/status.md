@@ -30,3 +30,9 @@
 - Start/stop: Step Functions state machine `upskilling-p2-demo-session` (no Lambda). `deploy\demo-up.ps1 -Hours N` starts the box, points its firewall at the caller's current IP, waits for the API and Fission (49 s in the test), and the box stops by itself after N hours. `deploy\demo-down.ps1` stops it now. The public IP changes on every start, the script prints the new one.
 - Gotchas hit: Fission chart 1.27.0 does not install its CRDs (apply them first, `remote-k3s.sh` does); a UTF-8 BOM in backend/.env broke the Kubernetes secret keys (never re-save .env with Windows PowerShell `Set-Content -Encoding utf8`).
 - Not yet: Bedrock (account still being verified), M1/M2 demo recordings.
+
+## 2026-11-23 Secrets in Parameter Store
+- backend/.env is stored as one SecureString parameter `/upskilling-p2/onboarding-buddy/env` (standard tier, free, default AWS-managed key) by `deploy\push-secrets.ps1`. Chosen over Secrets Manager on cost (about $0.40/secret/month there); same pattern, can move later.
+- The box's role may read only that parameter. `sync-env.service` writes the API's .env before Docker starts, `sync-k8s.service` rebuilds the Fission secret after k3s is up. No more scp of .env.
+- Proven: deleted the box's .env and the Kubernetes secret, stopped with the state machine, started with demo-up: both came back on their own, API plan stream and Fission welcome worked (ready in 50 s).
+- After a key change: run push-secrets.ps1, then demo-up (or demo-down + demo-up if the box is already running).
