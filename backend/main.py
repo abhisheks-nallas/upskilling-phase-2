@@ -13,10 +13,11 @@ from strands import Agent
 from strands.models import BedrockModel
 from strands.models.litellm import LiteLLMModel
 
-from onboarding_tools import build_30_day_plan, get_access_checklist
+from onboarding_tools import build_30_day_plan, get_access_checklist, make_plan
+from plan_graph import make_llm, run_plan
 
 load_dotenv()
-app = FastAPI(title = "Onboarding Buddy API", version="0.2.0")
+app = FastAPI(title = "Onboarding Buddy API", version="0.3.0")
 
 # Shows an "Authorize" button in /docs. auto_error=False so we return our own 401
 api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
@@ -31,6 +32,12 @@ def check_api_key(api_key:str|None = Depends(api_key_header)):
 
 class ChatRequest(BaseModel):
     message: str
+
+
+class PlanRequest(BaseModel):
+    role: str
+    start_date: str
+    spoil_first_draft: bool = False  # demo switch, see plan_graph.py
 
 
 class Assistant:
@@ -115,4 +122,27 @@ async def chat_stream(req:ChatRequest):
             "Cache-Control": "no-cache",
             "X-Accel-Buffering": "no"
         }
+    )
+
+
+@app.post("/plan/stream", dependencies=[Depends(check_api_key)])
+async def plan_stream(req:PlanRequest):
+    try:
+        make_plan(req.role, req.start_date)  # check role and date now so a bad request gets a 422, not a broken stream
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e))
+
+    async def events() -> AsyncIterator[str]:
+        try:
+            async for item in run_plan(make_llm(), req.role, req.start_date, req.spoil_first_draft):
+                name = item.pop("event")
+                yield f"event: {name}\ndata: {json.dumps(item)}\n\n"
+            yield "event: done\ndata: {}\n\n"
+        except Exception as e:
+            yield f"event: error\ndata:{json.dumps({'error': str(e)})}\n\n"
+
+    return StreamingResponse(
+        events(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"}
     )

@@ -95,34 +95,21 @@ def normalise_role(role:str) -> str | None:
     return ROLE_ALIASES.get(role.strip().lower())
 
 
-@tool
-def get_access_checklist(role:str) -> str:
-    """List the tools and access a new joiner needs on their first day.
-
-    Args:
-        role: The job role, for example "developer", "qa", "ba" or "pm".
-    """
+def make_access(role:str) -> dict:
     key = normalise_role(role)
     if not key:
-        return f"Error: unknown role '{role}'. Use one of: developer, qa, ba, pm."
-    return json.dumps({"role": key, "access": COMMON_ACCESS + ROLE_ACCESS[key]})
+        raise ValueError(f"unknown role '{role}'. Use one of: developer, qa, ba, pm.")
+    return {"role": key, "access": COMMON_ACCESS + ROLE_ACCESS[key]}
 
 
-@tool
-def build_30_day_plan(role:str, start_date:str) -> str:
-    """Build a day-by-day plan for a new joiner's first 30 days. Weekends are skipped.
-
-    Args:
-        role: The job role, for example "developer", "qa", "ba" or "pm".
-        start_date: The first day at work, as YYYY-MM-DD, for example "2026-12-01".
-    """
+def make_plan(role:str, start_date:str) -> dict:
     key = normalise_role(role)
     if not key:
-        return f"Error: unknown role '{role}'. Use one of: developer, qa, ba, pm."
+        raise ValueError(f"unknown role '{role}'. Use one of: developer, qa, ba, pm.")
     try:
         start = date.fromisoformat(start_date.strip())
     except ValueError:
-        return f"Error: '{start_date}' is not a valid date. Use YYYY-MM-DD."
+        raise ValueError(f"'{start_date}' is not a valid date. Use YYYY-MM-DD.")
 
     plan:list[dict] = []
     used_in_week:dict[int, int] = {}
@@ -139,4 +126,31 @@ def build_30_day_plan(role:str, start_date:str) -> str:
             task = task.format(focus=ROLE_FOCUS[key][week])
         plan.append({"date": day.isoformat(), "day": day.strftime("%a"), "week": title, "task": task})
 
-    return json.dumps({"role": key, "start_date": start.isoformat(), "plan": plan})
+    return {"role": key, "start_date": start.isoformat(), "plan": plan}
+
+
+@tool
+def get_access_checklist(role:str) -> str:
+    """List the tools and access a new joiner needs on their first day.
+
+    Args:
+        role: The job role, for example "developer", "qa", "ba" or "pm".
+    """
+    try:
+        return json.dumps(make_access(role))
+    except ValueError as e:
+        return f"Error: {e}"
+
+
+@tool
+def build_30_day_plan(role:str, start_date:str) -> str:
+    """Build a day-by-day plan for a new joiner's first 30 days. Weekends are skipped.
+
+    Args:
+        role: The job role, for example "developer", "qa", "ba" or "pm".
+        start_date: The first day at work, as YYYY-MM-DD, for example "2026-12-01".
+    """
+    try:
+        return json.dumps(make_plan(role, start_date))
+    except ValueError as e:
+        return f"Error: {e}"

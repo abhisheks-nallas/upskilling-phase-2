@@ -35,11 +35,6 @@ client = TestClient(main.app)
 HEADERS = {"X-API-Key": "test-key"}
 
 
-@pytest.fixture(autouse=True)
-def api_key(monkeypatch):
-    monkeypatch.setenv("API_KEY", "test-key")
-
-
 def parse_sse(body:str) -> list[tuple[str, dict]]:
     events = []
     for block in body.strip().split("\n\n"):

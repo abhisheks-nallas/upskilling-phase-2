@@ -42,3 +42,16 @@ powershell -File ..\deploy\deploy-ec2.ps1     # one EC2 instance + Docker, reach
 powershell -File ..\deploy\update-ec2.ps1     # push new code or .env to the running instance (no firewall changes)
 powershell -File ..\deploy\teardown-ec2.ps1   # removes everything it created
 ```
+
+## Plan agents (Milestone 2)
+
+`POST /plan/stream` (needs `X-API-Key`) runs a LangGraph of two agents: a **Planner** that rewrites the template 30-day plan for the role, and a **Reviewer** that checks it (dates, day 1 = access setup, tone). A rejected draft goes back to the Planner with feedback, up to 3 drafts, then the plain template is returned (`"source": "fallback"`).
+
+```
+curl -N -H "X-API-Key: $API_KEY" -H "Content-Type: application/json" \
+  -d '{"role":"developer","start_date":"2026-12-01","spoil_first_draft":true}' http://localhost:8000/plan/stream
+```
+
+Events: `progress` (planner / reviewer / fallback steps), `result` (the plan and its `source`), `done`, `error`.
+`spoil_first_draft` is a demo switch: it damages the first draft so you can show the Reviewer catching it and the retry fixing it.
+Tracing goes to LangSmith when the `LANGSMITH_*` settings are in `.env`. Tests switch tracing off.
