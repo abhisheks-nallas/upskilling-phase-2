@@ -12,6 +12,8 @@ function Write-Json([string]$path, [string]$text) { [IO.File]::WriteAllText($pat
 
 # Drop a byte-order mark and Windows line endings so the keys on the server are clean
 $text = [IO.File]::ReadAllText((Join-Path $Root "backend\.env")).TrimStart([char]0xFEFF) -replace "`r", ""
+# The box is "staging": its LangSmith traces go to the -staging project, not the -local one your PC uses
+$text = $text -replace '(?m)^LANGSMITH_AGENT_ENVIRONMENT=.*$', 'LANGSMITH_AGENT_ENVIRONMENT=staging'
 $tmp = Join-Path $env:TEMP "env-param.txt"
 Write-Json $tmp $text
 Invoke-Aws ssm put-parameter --name $Param --type SecureString --value "file://$tmp" --overwrite --description "Onboarding Buddy .env (upskilling-p2)" | Out-Null

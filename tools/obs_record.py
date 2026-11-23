@@ -4,9 +4,11 @@
   python tools/obs_record.py setup    # add a Display Capture to the current scene if it has none
   python tools/obs_record.py start
   python tools/obs_record.py stop     # prints where the video was saved
+  python tools/obs_record.py shot     # saves what OBS sees to recordings/shot.png (to check the capture)
 
 The password comes from recordings/.env (git-ignored). Needs: pip install obsws-python python-dotenv
 """
+import base64
 import sys
 from pathlib import Path
 from urllib.parse import urlparse
@@ -57,6 +59,12 @@ def main():
     elif cmd == "start":
         client.start_record()
         print("Recording started")
+    elif cmd == "shot":
+        source = client.get_scene_item_list(scene_name()).scene_items[0]["sourceName"]
+        data = client.get_source_screenshot(source, "png", 960, 540, -1).image_data.split(",", 1)[1]
+        out = Path(__file__).resolve().parent.parent / "recordings" / "shot.png"
+        out.write_bytes(base64.b64decode(data))
+        print("Saved", out)
     elif cmd == "stop":
         print("Saved:", client.stop_record().output_path)
     else:
