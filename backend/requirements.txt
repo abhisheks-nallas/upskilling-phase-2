@@ -4,3 +4,5 @@ python-dotenv
 strands-agents[litellm]
 langgraph
 langchain-litellm
+chromadb
+langfuse

@@ -36,3 +36,11 @@
 - The box's role may read only that parameter. `sync-env.service` writes the API's .env before Docker starts, `sync-k8s.service` rebuilds the Fission secret after k3s is up. No more scp of .env.
 - Proven: deleted the box's .env and the Kubernetes secret, stopped with the state machine, started with demo-up: both came back on their own, API plan stream and Fission welcome worked (ready in 50 s).
 - After a key change: run push-secrets.ps1, then demo-up (or demo-down + demo-up if the box is already running).
+
+## 2026-11-23 Milestone 3 (G-3) built, evaluation 14 of 20 questions done
+- Branch `milestone-3`. RAG in `backend/rag.py`, sample docs in `backend/knowledge/` (11 made-up files), 26 eval questions in `backend/eval/questions.json`. Chat agent got a third tool `search_company_docs` (v2). Decision record: `.10x/adrs/003-local-rag-langfuse-hobby.md` (local Chroma instead of Bedrock KB, Langfuse Cloud Hobby). 40 tests pass, tests never call Groq or Langfuse.
+- Langfuse: `retrieval`, `generation`, `rag-query` spans, traces tagged `rag-v1`/`rag-v2`, RAGAS scores posted per trace (checked through the API, they match the local results). Langfuse Cloud removed its old trace-read API on 2026-11-16, only ingestion and the v2 APIs work.
+- RAGAS on 14 questions (both versions fully scored): faithfulness 0.744 to 0.905 (+21.6%), answer relevancy 0.850 to 0.791 (-6.9%), context precision 0.786 to 1.000 (+27.3%), context recall 0.857 to 1.000 (+16.7%). Meets the +15% bar on 3 of 4. Report: `docs/ragas-report.md`, per query: `docs/ragas-results.csv`.
+- The G-3 sheet asks for at least 20 queries. The Groq free tier (8K tokens a minute, 200K a day) stopped the run after 14. Progress is saved in `tools/.rag_eval_cache.json` (git-ignored): run `backend\.venv\Scripts\python.exe tools\rag_eval.py --limit 20` again after the daily limit resets, it carries on. A Groq Developer plan would finish it in minutes for a few cents.
+- Judge noise is real: the same answer scored faithfulness 0.0 in one probe and 1.0 in the run. Treat scores as indicative.
+- Not yet: finish the remaining 6 questions, build a dashboard in the Langfuse UI (scores are there per trace), deploy the new image to the EC2 box (`deploy\push-image.ps1`, then demo-up), Bedrock backend for `retrieve()` (account still unverified).

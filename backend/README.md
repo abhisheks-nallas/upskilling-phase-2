@@ -71,3 +71,23 @@ powershell -File deploy\measure-cold-start.ps1 -Ip <ip>   # cold vs warm timings
 The public IP changes on every start, `demo-up` prints it. Fission function: `POST http://<ip>:31314/welcome` with `X-API-Key` and `{"name": "Asha", "role": "developer"}`.
 The box never gets `.env` copied to it. At every boot it fetches the encrypted Parameter Store value `/upskilling-p2/onboarding-buddy/env` (Docker's `.env` and the Fission secret). After changing `backend\.env`, run `push-secrets.ps1` and the next `demo-up` uses the new values.
 Don't re-save `backend\.env` with PowerShell `Set-Content -Encoding utf8` (it adds a hidden BOM that breaks the Kubernetes secret). Use an editor, or `[IO.File]::WriteAllText` with `UTF8Encoding($false)`.
+
+## Company knowledge search (Milestone 3)
+
+The chat agent has a third tool, `search_company_docs(question)`, for policy questions (leave, expenses, IT, security, benefits...). The sample documents are in `knowledge/*.md` and are made up for the demo. Replace them with real ones and re-run the evaluation.
+
+The search runs inside the API process, nothing extra to deploy: documents are split into chunks, embedded with Chroma's small built-in model (MiniLM via onnx, CPU, no API key) and kept in memory. It is rebuilt at start up, which takes about a second.
+
+Two versions of the pipeline live in `rag.py` so we can measure what the changes buy us:
+- **v1 (baseline):** fixed 400-character chunks, vector search only, plain prompt.
+- **v2 (used by the chat tool):** one chunk per document section with the title in front, vector and keyword (BM25) results merged, a prompt that says "answer only from the context".
+
+Tracing: `retrieval`, `generation` and the whole `rag-query` are sent to Langfuse when the `LANGFUSE_*` keys are in `.env`. Traces are tagged `rag-v1` or `rag-v2`. Tests switch it off.
+
+## Measure RAG quality (G-3)
+
+```
+backend\.venv\Scripts\python.exe tools\rag_eval.py --limit 20      # 20 questions through v1 and v2, scored with RAGAS
+```
+It writes `docs/ragas-report.md` (before vs after for faithfulness, answer relevancy, context precision, context recall), `docs/ragas-results.csv` (every question) and posts the scores to Langfuse, so the dashboard shows them per query.
+The Groq free tier allows 8,000 tokens a minute and 200,000 a day, and RAGAS judge calls are token-hungry, so the script waits between calls and saves its progress. If the daily limit stops it, run the same command again later. Use `--fresh` after changing documents, questions or RAG code.

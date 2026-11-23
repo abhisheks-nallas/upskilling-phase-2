@@ -1,7 +1,8 @@
 import json
 from datetime import date
 
-from onboarding_tools import build_30_day_plan, get_access_checklist
+import rag
+from onboarding_tools import build_30_day_plan, get_access_checklist, search_company_docs
 
 
 def plan_for(role:str, start:str) -> list[dict]:
@@ -57,3 +58,21 @@ def test_plan_works_for_every_start_weekday_and_role():
             plan = plan_for(role, f"2026-12-{start_day:02d}")
             assert 20 <= len(plan) <= 22
             assert all("{focus}" not in p["task"] for p in plan)
+
+
+class FakeRetriever:
+    def search(self, question, k=3):
+        return [{"source": "leave-policy.md", "text": "Leave Policy - Annual leave\nYou get 18 days."}]
+
+
+def test_search_company_docs_returns_passages_with_their_source(monkeypatch):
+    monkeypatch.setattr(rag, "get_retriever", lambda version="v2": FakeRetriever())
+    result = search_company_docs("how many leave days")
+    assert result.startswith("[leave-policy.md]") and "18 days" in result
+
+
+def test_search_company_docs_returns_an_error_text_when_search_breaks(monkeypatch):
+    def broken(version="v2"):
+        raise RuntimeError("index not built")
+    monkeypatch.setattr(rag, "get_retriever", broken)
+    assert search_company_docs("anything") == "Error: index not built"

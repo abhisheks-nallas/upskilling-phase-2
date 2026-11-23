@@ -221,3 +221,6 @@ __marimo__/
 
 # OBS recordings and the websocket password
 recordings/
+
+# RAG eval progress, local only
+tools/.rag_eval_cache.json

@@ -154,3 +154,19 @@ def build_30_day_plan(role:str, start_date:str) -> str:
         return json.dumps(make_plan(role, start_date))
     except ValueError as e:
         return f"Error: {e}"
+
+
+@tool
+def search_company_docs(question:str) -> str:
+    """Look up company policies and how things work: leave, working hours, IT setup, expenses and travel, security,
+    probation and reviews, learning budget, benefits and payroll, code review and releases, who to contact.
+
+    Args:
+        question: What the new joiner wants to know, in plain words.
+    """
+    try:
+        from rag import get_retriever  # imported here so the API starts fast and the other tools work without the search libraries
+        hits = get_retriever("v2").search(question)
+    except Exception as e:
+        return f"Error: {e}"
+    return "\n\n".join(f"[{h['source']}]\n{h['text']}" for h in hits)

@@ -13,11 +13,11 @@ from strands import Agent
 from strands.models import BedrockModel
 from strands.models.litellm import LiteLLMModel
 
-from onboarding_tools import build_30_day_plan, get_access_checklist, make_plan
+from onboarding_tools import build_30_day_plan, get_access_checklist, make_plan, search_company_docs
 from plan_graph import make_llm, run_plan
 
 load_dotenv()
-app = FastAPI(title = "Onboarding Buddy API", version="0.3.0")
+app = FastAPI(title = "Onboarding Buddy API", version="0.4.0")
 
 # Shows an "Authorize" button in /docs. auto_error=False so we return our own 401
 api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
@@ -47,7 +47,9 @@ class Assistant:
         Today is {date.today():%A, %Y-%m-%d}.
         Use build_30_day_plan when asked for a plan. Ask for the role and start date if you don't have them.
         Use get_access_checklist when asked what access or tools someone needs.
-        Never make up dates or access items. Only help with onboarding questions. Keep answers short and clear.
+        Use search_company_docs for questions about company policies and how things work, such as leave, expenses, IT, security or benefits.
+        Answer those only from what search_company_docs returns, quote exact numbers, and say you don't know if it has no answer.
+        Never make up dates, access items or policy details. Only help with onboarding questions. Keep answers short and clear.
         """
         # LLM_PROVIDER picks the model backend: "groq" (default) or "bedrock"
         self.provider = os.environ.get("LLM_PROVIDER", "groq").lower()
@@ -87,7 +89,7 @@ class Assistant:
         return Agent(
             model=self.init_llm_model(),
             system_prompt=self.system_prompt,
-            tools=[build_30_day_plan, get_access_checklist],
+            tools=[build_30_day_plan, get_access_checklist, search_company_docs],
             callback_handler=None  # stops it printing to the terminal
         )
 
