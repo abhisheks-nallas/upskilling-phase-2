@@ -1,0 +1,35 @@
+{
+  "Comment": "One demo session: start the box, keep it up for $.seconds, then stop it. No Lambda code, only direct EC2 calls.",
+  "StartAt": "StartBox",
+  "States": {
+    "StartBox": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::aws-sdk:ec2:startInstances",
+      "Parameters": { "InstanceIds.$": "States.Array($.instanceId)" },
+      "ResultPath": null,
+      "Next": "Pause"
+    },
+    "Pause": { "Type": "Wait", "Seconds": 15, "Next": "CheckBox" },
+    "CheckBox": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::aws-sdk:ec2:describeInstances",
+      "Parameters": { "InstanceIds.$": "States.Array($.instanceId)" },
+      "ResultPath": "$.check",
+      "Next": "IsRunning"
+    },
+    "IsRunning": {
+      "Type": "Choice",
+      "Choices": [
+        { "Variable": "$.check.Reservations[0].Instances[0].State.Name", "StringEquals": "running", "Next": "KeepBox" }
+      ],
+      "Default": "Pause"
+    },
+    "KeepBox": { "Type": "Wait", "SecondsPath": "$.seconds", "Next": "StopBox" },
+    "StopBox": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::aws-sdk:ec2:stopInstances",
+      "Parameters": { "InstanceIds.$": "States.Array($.instanceId)" },
+      "End": true
+    }
+  }
+}

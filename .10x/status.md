@@ -21,3 +21,12 @@
 - No key configured on the server = every chat request rejected. 19 tests pass.
 - Firewall unchanged (developer's IP only). Developer demos from their own PC over screenshare.
 - Push code/.env changes with deploy\update-ec2.ps1.
+
+## 2026-11-23 Milestone 2 (G-2) built
+- LangGraph Planner + Reviewer (`backend/plan_graph.py`, `POST /plan/stream`): retry up to 3 drafts, then template fallback. Demo switch `spoil_first_draft`. 28 tests pass, tests never call Groq or LangSmith. Verified live against Groq and on the cloud box.
+- LangSmith tracing is on through `LANGSMITH_*` in backend/.env (agent id + environment). Do not also set LANGSMITH_PROJECT, the two conflict and traces stop.
+- One c7i-flex.large box (`upskilling-p2-stack`, Sydney, 30 GB disk, 2 GB swap) runs the API in Docker, k3s and Fission. Images are built on the PC and pulled from ECR (`deploy\push-image.ps1`, `:latest`). Measured: 1.4 GB used of 4 GB with everything running. The old t3.small is stopped, not terminated.
+- Fission `welcome` function (`fission/welcome/welcome.py`, `POST :31314/welcome`, needs X-API-Key). Cold start measured: ~1.3 s cold vs ~1.16 s warm, rows in `docs/cold-start.csv`.
+- Start/stop: Step Functions state machine `upskilling-p2-demo-session` (no Lambda). `deploy\demo-up.ps1 -Hours N` starts the box, points its firewall at the caller's current IP, waits for the API and Fission (49 s in the test), and the box stops by itself after N hours. `deploy\demo-down.ps1` stops it now. The public IP changes on every start, the script prints the new one.
+- Gotchas hit: Fission chart 1.27.0 does not install its CRDs (apply them first, `remote-k3s.sh` does); a UTF-8 BOM in backend/.env broke the Kubernetes secret keys (never re-save .env with Windows PowerShell `Set-Content -Encoding utf8`).
+- Not yet: Bedrock (account still being verified), M1/M2 demo recordings.
