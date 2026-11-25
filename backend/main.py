@@ -13,11 +13,12 @@ from strands import Agent
 from strands.models import BedrockModel
 from strands.models.litellm import LiteLLMModel
 
+from guardrails import REFUSAL, check_input, clean_output
 from onboarding_tools import build_30_day_plan, get_access_checklist, make_plan, search_company_docs
 from plan_graph import make_llm, run_plan
 
 load_dotenv()
-app = FastAPI(title = "Onboarding Buddy API", version="0.4.0")
+app = FastAPI(title = "Onboarding Buddy API", version="0.5.0")
 
 # Shows an "Authorize" button in /docs. auto_error=False so we return our own 401
 api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
@@ -101,8 +102,12 @@ class Assistant:
 
     async def sse_events(self, message:str) -> AsyncIterator[str]:
         try:
+            if check_input(message):   # blocked before the model sees it. Same stream shape, so clients need no special case
+                yield f"data: {json.dumps({'text': REFUSAL})}\n\n"
+                yield "event: done\ndata: {}\n\n"
+                return
             async for text in self.generate_response(message):
-                yield f"data: {json.dumps({'text': text})}\n\n"
+                yield f"data: {json.dumps({'text': clean_output(text)})}\n\n"
             yield "event: done\ndata: {}\n\n"
         except Exception as e:
             yield f"event: error\ndata:{json.dumps({'error': str(e)})}\n\n"
