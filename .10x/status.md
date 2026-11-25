@@ -79,3 +79,6 @@
 
 - Wk 4 MCP example (2026-11-26): backend/mcp_docs_server.py exposes search_company_docs and get_access_checklist over MCP. With USE_MCP=1 the Strands agent discovers and calls them through MCPClient (off by default, deployed API unchanged). Tests in test_mcp.py, live check with Groq passed, notes in docs/mcp-notes.md. The Fission welcome function already calls Groq (stand-in for Bedrock) with an HTTP trigger and a measured cold start (docs/cold-start.csv), so no change was needed there.
 
+
+- Langfuse dashboard 'RAG quality (G-3)' completed on 2026-11-26: added root and generation latency percentiles and token usage per model (7 widgets). The G-3 target is to be agreed with the tech lead. Test report updated with the dashboard, the Wk 4 MCP and Fission items, and defects D-5 and D-7.
+

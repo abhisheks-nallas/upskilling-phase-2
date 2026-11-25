@@ -16,6 +16,7 @@ RAG v1 (naive baseline) vs v2 (optimised), 20 questions, judged locally by Qwen3
 | context_recall | 0.850 | 1.000 | +17.6% | yes |
 
 G-3 result: **not met** (2 of 4 metrics). v1 recall of 0.85 leaves little room, and 20 questions with a small judge are noisy.
+Status: the target is being taken up with the tech lead. Points for that conversation: the +15% ceiling at a v1 recall of 0.85 (best possible +17.6%), the noise of a 20-question set with a small judge, and which Phase 1 Wk 9 baseline applies (we compared against our own v1, not the Phase 1 numbers).
 CI baseline for v2 (6 questions, Groq `gpt-oss-120b` judge): faithfulness 1.000, answer_relevancy 0.742, context_precision 1.000, context_recall 1.000.
 
 ## 2. Test suite
@@ -36,6 +37,12 @@ Limit: the guardrails are pattern lists. A rephrased attack can get past them an
 | PR with a degraded prompt | Blocked: faithfulness -29.0%, answer_relevancy -14.6% (limit -10%) |
 | Docker build in CI | builds on every PR |
 | p95 latency alert | Fires on a 0.5 s limit (p95 1.34 s over 157 traces) and passes on 30 s |
+| Langfuse dashboard "RAG quality (G-3)" | Live: per-version score averages, trace count, scores table, root and generation latency percentiles (p50 to p99), token usage per model (cost is $0, the free Groq model has no price) |
+
+## 4a. Wk 4 items (MCP and Fission)
+
+- MCP: `backend/mcp_docs_server.py` exposes the docs search and access checklist as MCP tools. With `USE_MCP=1` the agent discovers and calls them through MCP (tests in `backend/tests/test_mcp.py`, notes in `docs/mcp-notes.md`). Off by default.
+- Fission: the welcome function has an HTTP trigger, calls Groq as the stand-in for Bedrock, and its cold start is measured in `docs/cold-start.csv` (cold 1.34 s against about 1 s warm).
 
 ## 5. Defect log
 
@@ -45,7 +52,8 @@ Limit: the guardrails are pattern lists. A rephrased attack can get past them an
 | D-2 | P2 | Langfuse removed the old traces API on 2026-11-16, so a first version of the p95 alert returned HTTP 410 | alert test | Fixed: now reads the v2 observations API |
 | D-3 | P2 | The tuned v2 prompt lowered faithfulness (+10.0% vs +14.5%) | G-3 re-evaluation | Closed: tuning reverted, result recorded |
 | D-4 | P2 | Docker image copied files by name, so a new module would be missing in the container | review | Fixed: `guardrails.py` added to the Dockerfile |
-| D-5 | Open | Only 2 of 4 RAGAS metrics reach +15% (G-3) | RAGAS | Open: raise the gate wording with the mentor |
+| D-5 | Open | Only 2 of 4 RAGAS metrics reach +15% (G-3), and the baseline used is our own v1, not the Phase 1 Wk 9 scores | RAGAS | Open: to be agreed with the tech lead |
+| D-7 | Open | Bedrock is not available on the AWS account, so Groq stands in for Bedrock (model calls, Fission function) | setup | Open: switch when quota is granted |
 | D-6 | Open | Guardrails rely on patterns and can be bypassed by rephrasing | guardrail run | Open: move to Bedrock Guardrails once available |
 
 ## 6. Retro notes
