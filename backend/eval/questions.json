@@ -1,28 +1,102 @@
 [
-  {"question": "How many days of annual leave will I get in my first year if I join in July?", "reference": "Annual leave is pro-rated from the joining month, so someone joining in July gets 9 days in the first year.", "source": "leave-policy.md"},
-  {"question": "How many unused annual leave days can I carry over to next year?", "reference": "Up to 5 unused days can be carried over. Anything above that lapses on 31 December.", "source": "leave-policy.md"},
-  {"question": "When do I need a medical certificate for sick leave?", "reference": "A medical certificate is needed only when you are off for more than 2 days in a row.", "source": "leave-policy.md"},
-  {"question": "How much paid maternity and paternity leave does the company give?", "reference": "Maternity leave is 26 weeks and paternity leave is 10 working days, both fully paid.", "source": "leave-policy.md"},
-  {"question": "What are the core hours I need to be available?", "reference": "Everyone should be available between 11:00 and 16:00 IST on working days.", "source": "working-hours.md"},
-  {"question": "How many days a week can I work remotely as a new joiner?", "reference": "New joiners work from the office for the first two weeks. After that you can work remotely up to 2 days a week, with your manager approving any change.", "source": "working-hours.md"},
-  {"question": "When do I have to submit my timesheet?", "reference": "Log your hours in the timesheet tool every Friday before 18:00. Timesheets not submitted by Monday 12:00 are flagged to your manager.", "source": "working-hours.md"},
-  {"question": "How many approvals does a pull request need before it can be merged?", "reference": "Every pull request needs at least 2 approvals, and one of them must be from a code owner.", "source": "code-and-reviews.md"},
-  {"question": "On which days and times can production releases happen?", "reference": "Production releases happen on Tuesdays and Thursdays between 10:00 and 15:00 IST. There are no releases on Fridays or before public holidays.", "source": "code-and-reviews.md"},
-  {"question": "When do developers get write access to the team repositories?", "reference": "Developers get read access on day 2 and write access after completing the security awareness quiz. Access is requested through the helpdesk portal and approved by the manager.", "source": "code-and-reviews.md"},
-  {"question": "What is the deadline to submit an expense claim?", "reference": "Expense claims must be submitted in the finance portal within 30 days of the expense, with the original receipt attached.", "source": "expenses-and-travel.md"},
-  {"question": "Who needs to approve an expense claim of INR 10,000?", "reference": "Claims up to INR 5,000 are approved by the manager. A claim above INR 5,000 also needs finance approval.", "source": "expenses-and-travel.md"},
-  {"question": "What is the hotel cost limit per night when I travel for work?", "reference": "Hotels are capped at INR 6,000 per night in metro cities and INR 4,000 elsewhere.", "source": "expenses-and-travel.md"},
-  {"question": "How much daily allowance do I get on business travel?", "reference": "The daily allowance is INR 1,200 for meals and local transport, paid without receipts.", "source": "expenses-and-travel.md"},
-  {"question": "How quickly do I have to report a suspected security incident such as a lost laptop?", "reference": "Report it to the security team within 1 hour, using the #security-incident channel or the security hotline.", "source": "security-and-data.md"},
-  {"question": "Can I paste customer data into a public AI chat tool to get help with my work?", "reference": "No. Only company-approved AI tools may be used for work, and customer data, which is Restricted, must never be pasted into public AI chat tools.", "source": "security-and-data.md"},
-  {"question": "How long is the probation period and what is the notice period during it?", "reference": "Probation is 6 months. The notice period during probation is 15 days on either side, and it becomes 60 days after confirmation.", "source": "probation-and-reviews.md"},
-  {"question": "When are the check-ins with my manager during the first months?", "reference": "Your manager holds structured check-ins at 30, 60 and 90 days.", "source": "probation-and-reviews.md"},
-  {"question": "When are performance reviews held and when do salary revisions take effect?", "reference": "Reviews happen twice a year, in April and October. Salary revisions and promotions are decided after the October cycle and take effect from 1 January.", "source": "probation-and-reviews.md"},
-  {"question": "What is the yearly learning budget and how many hours of protected learning time do I get?", "reference": "The learning budget is INR 30,000 per year, and everyone gets 4 hours a week of protected learning time.", "source": "learning-and-growth.md"},
-  {"question": "On which day is salary paid each month?", "reference": "Salary is paid on the last working day of each month, and payslips are available in the HR portal the same day.", "source": "benefits-and-payroll.md"},
-  {"question": "What does the group health insurance cover?", "reference": "It covers the employee, spouse and up to two children for INR 5,00,000 from the first day of employment. Parents can be added at an extra premium during enrolment in February.", "source": "benefits-and-payroll.md"},
-  {"question": "How much do the employee and the company contribute to the provident fund?", "reference": "Both the employee and the company contribute 12 percent of basic salary. The UAN from an earlier job must be given to HR in the first week.", "source": "benefits-and-payroll.md"},
-  {"question": "How much is the referral bonus and when do I get it?", "reference": "The referral bonus is INR 25,000, paid if the referred person is hired and completes 6 months. The referral must be submitted in the HR portal before the candidate interviews.", "source": "benefits-and-payroll.md"},
-  {"question": "How often does my buddy meet me?", "reference": "Your buddy meets you for 30 minutes every day in the first week and then once a week for the first three months.", "source": "first-week.md"},
-  {"question": "Which multi-factor authentication method is accepted for my work account?", "reference": "You must set up multi-factor authentication with the authenticator app on first login. SMS codes are not accepted.", "source": "it-setup.md"}
+ {
+  "question": "How many days a year can I work from a different city, and how early do I have to ask?",
+  "reference": "After confirmation you can work from another city in India for up to 20 days in a calendar year. Ask your manager at least 10 working days in advance.",
+  "source": "remote-work-and-hybrid.md"
+ },
+ {
+  "question": "Can I work from another country for a couple of weeks?",
+  "reference": "Not by default. It needs written approval from both HR and finance, requested at least 8 weeks before the trip.",
+  "source": "remote-work-and-hybrid.md"
+ },
+ {
+  "question": "How quickly do I have to respond to a Severity 1 page and how often do I update?",
+  "reference": "Acknowledge a Severity 1 page within 10 minutes and post a status update every 30 minutes until it is resolved.",
+  "source": "on-call-and-incidents.md"
+ },
+ {
+  "question": "What do I get for being on call, and what if I get paged during the night?",
+  "reference": "Each on-call week earns an allowance of INR 2,500. If night-time incident work (22:00 to 06:00) adds up to more than one hour you get one compensatory day off, to be used within 30 days.",
+  "source": "on-call-and-incidents.md"
+ },
+ {
+  "question": "When does a postmortem have to be written and where is it reviewed?",
+  "reference": "Severity 1 and 2 incidents need a blameless postmortem within 5 working days. It is reviewed in the weekly reliability meeting on Wednesday at 15:00.",
+  "source": "on-call-and-incidents.md"
+ },
+ {
+  "question": "What do I need to be considered for a promotion?",
+  "reference": "At least 12 months at the current level and a rating of 4 or higher in each of the last two cycles, or one rating of 5. Promotions take effect from 1 January.",
+  "source": "performance-and-promotions.md"
+ },
+ {
+  "question": "My laptop was stolen. What do I have to do and how fast?",
+  "reference": "Report it to the IT hotline and the security team within 2 hours and file a police complaint within 24 hours. If it was due to negligence you may have to pay up to 25 percent of the depreciated value.",
+  "source": "equipment-and-assets.md"
+ },
+ {
+  "question": "How much can a second monitor cost and who buys it?",
+  "reference": "A second monitor can cost up to INR 12,000 and IT makes the purchase.",
+  "source": "equipment-and-assets.md"
+ },
+ {
+  "question": "Is accidental damage to my laptop covered if it happens twice?",
+  "reference": "Insurance covers accidental damage once every 2 years per device. A second incident within 2 years means you pay 50 percent of the repair cost.",
+  "source": "equipment-and-assets.md"
+ },
+ {
+  "question": "Can I paste client code into an AI chat tool to debug it?",
+  "reference": "No. Client code, documents and customer data must not be pasted into public AI chat tools. Use only approved assistants and only if the client contract allows it.",
+  "source": "client-projects-and-communication.md"
+ },
+ {
+  "question": "By when does the weekly status report go to the client?",
+  "reference": "Every Thursday by 17:00 IST, written by the delivery lead from the notes team members add to the tracker by Wednesday evening.",
+  "source": "client-projects-and-communication.md"
+ },
+ {
+  "question": "What do I need to do before a visitor comes to the office?",
+  "reference": "Register the visitor at the front desk at least one hour before arrival with their name and company. Visitors wear a badge and are escorted at all times.",
+  "source": "office-and-facilities.md"
+ },
+ {
+  "question": "How many days of annual leave will I get in my first year if I join in July?",
+  "reference": "Annual leave is pro-rated from the joining month, so someone joining in July gets 9 days in the first year.",
+  "source": "leave-policy.md"
+ },
+ {
+  "question": "How many unused annual leave days can I carry over to next year?",
+  "reference": "Up to 5 unused days can be carried over. Anything above that lapses on 31 December.",
+  "source": "leave-policy.md"
+ },
+ {
+  "question": "When do I need a medical certificate for sick leave?",
+  "reference": "A medical certificate is needed only when you are off for more than 2 days in a row.",
+  "source": "leave-policy.md"
+ },
+ {
+  "question": "How much paid maternity and paternity leave does the company give?",
+  "reference": "Maternity leave is 26 weeks and paternity leave is 10 working days, both fully paid.",
+  "source": "leave-policy.md"
+ },
+ {
+  "question": "What are the core hours I need to be available?",
+  "reference": "Everyone should be available between 11:00 and 16:00 IST on working days.",
+  "source": "working-hours.md"
+ },
+ {
+  "question": "How many days a week can I work remotely as a new joiner?",
+  "reference": "New joiners work from the office for the first two weeks. After that you can work remotely up to 2 days a week, with your manager approving any change.",
+  "source": "working-hours.md"
+ },
+ {
+  "question": "When do I have to submit my timesheet?",
+  "reference": "Log your hours in the timesheet tool every Friday before 18:00. Timesheets not submitted by Monday 12:00 are flagged to your manager.",
+  "source": "working-hours.md"
+ },
+ {
+  "question": "How many approvals does a pull request need before it can be merged?",
+  "reference": "Every pull request needs at least 2 approvals, and one of them must be from a code owner.",
+  "source": "code-and-reviews.md"
+ }
 ]

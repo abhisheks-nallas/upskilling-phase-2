@@ -161,8 +161,16 @@ def main():
         questions = questions[:args.limit]
     cache = {} if args.fresh else load_cache()
     llm = make_llm()
-    judge_model = f"groq/{os.environ.get('GROQ_JUDGE_MODEL', 'openai/gpt-oss-120b')}"
-    judge = LangchainLLMWrapper(PacedJudge(model=judge_model, temperature=0, max_tokens=4000))
+    local_url = os.environ.get("LOCAL_JUDGE_URL")   # e.g. http://localhost:8080/v1, a llama.cpp server on this PC
+    if local_url:
+        global JUDGE_PAUSE
+        JUDGE_PAUSE = 0   # no rate limits on a local model
+        judge_model = f"openai/{os.environ.get('LOCAL_JUDGE_MODEL', 'qwen3-14b')}"
+        judge = LangchainLLMWrapper(PacedJudge(model=judge_model, api_base=local_url, api_key="local",
+                                               temperature=0, max_tokens=4000))
+    else:
+        judge_model = f"groq/{os.environ.get('GROQ_JUDGE_MODEL', 'openai/gpt-oss-120b')}"
+        judge = LangchainLLMWrapper(PacedJudge(model=judge_model, temperature=0, max_tokens=4000))
     embeddings = LangchainEmbeddingsWrapper(LocalEmbeddings())
     langfuse = get_client()
     retrievers = {v: Retriever(v) for v in args.versions}
