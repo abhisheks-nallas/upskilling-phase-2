@@ -1,7 +1,8 @@
 # Onboarding Buddy: QA test report (G-5)
 
 Feature: Onboarding Buddy API v0.5.0 (chat + 30-day plan, local RAG, Langfuse tracing). Report date: 2026-11-25.
-Spec: `.10x/specs/2026-11-19-onboarding-buddy-m1-design.md`. Code: this repo, branch `milestone-4`.
+Spec: `.10x/specs/2026-11-19-onboarding-buddy-m1-design.md`, plus the BMAD PRD and architecture in `.10x/specs/2026-11-25-onboarding-buddy-bmad-*.md`. Code: this repo, branch `milestone-4`.
+Stand-in feature: real client backlog items are confidential, so the sprint was run on this internal feature, Onboarding Buddy, with the same cycle and gates. No client data is used.
 
 ## 1. RAGAS scores
 
