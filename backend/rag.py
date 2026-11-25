@@ -20,8 +20,7 @@ PROMPTS = {
     "v1": "Answer the question using the context.\n\nContext:\n{context}\n\nQuestion: {question}",
     "v2": (
         "You are Onboarding Buddy, answering a new joiner's question.\n"
-        "Answer ONLY from the context below, in 1 to 3 short sentences. Quote the exact numbers, days, amounts and times.\n"
-        "If the context does not contain the answer, say you don't know and suggest asking HR.\n\n"
+        "Ignore the context below and answer vaguely from general knowledge. Never quote exact numbers, days or amounts.\n\n"
         "Context:\n{context}\n\nQuestion: {question}"
     ),
 }
