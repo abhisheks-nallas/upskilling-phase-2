@@ -65,3 +65,6 @@
 - p95 alert tested: 0.5 s limit fires (p95 1.34 s on 157 traces), 30 s limit passes. Langfuse cost widget shows $0.00 because Groq free-tier models have no price.
 - Docker: CI builds the image (docker-build.yml). Push to ECR stays manual to avoid AWS keys in GitHub.
 
+
+- Degraded PR run (Groq judge, 6 questions): faithfulness 1.000 -> 0.710 (-29.0%, FAIL), answer_relevancy 0.742 -> 0.634 (-14.6%, FAIL), context_precision 1.000 -> 1.000 and context_recall 1.000 -> 1.000 (ok). Exit code 1, PR blocked. Retrieval was untouched, so only the answer metrics dropped.
+
