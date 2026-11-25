@@ -49,3 +49,11 @@
 - Judge noise is real: the same answer scored faithfulness 0.0 in one probe and 1.0 in the run. Treat scores as indicative.
 - Deployed 2026-11-25: image pushed to ECR (`push-image.ps1`), secrets re-synced, box started with `demo-up`, and the running API reported 0.4.0 and answered two knowledge questions from the new docs. Note: the box keeps running the container it already has, it does not re-pull `:latest` on boot, so after each `push-image.ps1` run `deploy\remote-api.sh` on the box (pulls and restarts the container). Docker Desktop's disk image was moved to `D:\AI\docker\wsl` to keep C: free. Box stopped again with `demo-down`.
 - Not yet: Bedrock backend for `retrieve()` (account still unverified).
+
+## Milestone 4 (G-4): CI quality gate (in progress, 2026-11-25)
+- tools/ci_gate.py + .github/workflows/rag-gate.yml: on every PR runs the tests and a 6-question RAGAS check of RAG v2 (Groq judge). Fails if any metric is more than 10% below docs/ragas-baseline.json.
+- tools/latency_alert.py + .github/workflows/latency-alert.yml: daily p95 latency check on Langfuse rag-query spans, fails when over the limit (Langfuse Hobby has no alerts).
+- Generation span now records token counts. Langfuse removed the /traces API on 2026-11-16, so the alert reads /api/public/v2/observations.
+- Needs GitHub secrets: GROQ_API_KEY, LANGFUSE_PUBLIC_KEY, LANGFUSE_SECRET_KEY, LANGFUSE_BASE_URL.
+- Still to do: p50/p95 + cost dashboard in Langfuse (manual), degraded-prompt PR demo, Docker build/push in CI.
+

@@ -1,0 +1,26 @@
+name: p95 latency alert
+
+on:
+  schedule:
+    - cron: "0 4 * * *"   # daily, 09:30 IST
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "p95 limit in seconds (use a low value to test the alert)"
+        default: "8"
+
+jobs:
+  p95:
+    runs-on: ubuntu-latest
+    env:
+      LANGFUSE_PUBLIC_KEY: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
+      LANGFUSE_SECRET_KEY: ${{ secrets.LANGFUSE_SECRET_KEY }}
+      LANGFUSE_BASE_URL: ${{ secrets.LANGFUSE_BASE_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install langfuse python-dotenv
+      - name: Check p95 latency
+        run: python tools/latency_alert.py --limit "${{ inputs.limit || '8' }}" --hours 72

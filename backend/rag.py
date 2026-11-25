@@ -129,8 +129,11 @@ def get_retriever(version:str = "v2") -> Retriever:
 
 @observe(name="generation", as_type="generation", capture_input=False)
 def generate(llm, prompt:str) -> str:
-    text = llm.invoke(prompt).content
-    get_client().update_current_generation(input=prompt, output=text, model=str(getattr(llm, "model", "") or getattr(llm, "model_name", "")))
+    reply = llm.invoke(prompt)
+    text = reply.content
+    usage = getattr(reply, "usage_metadata", None)   # token counts, so Langfuse can show tokens and cost per query
+    tokens = {"input": usage.get("input_tokens", 0), "output": usage.get("output_tokens", 0)} if isinstance(usage, dict) else None
+    get_client().update_current_generation(input=prompt, output=text, usage_details=tokens, model=str(getattr(llm, "model", "") or getattr(llm, "model_name", "")))
     return text
 
 
