@@ -21,7 +21,7 @@ CI baseline for v2 (6 questions, Groq `gpt-oss-120b` judge): faithfulness 1.000,
 
 ## 2. Test suite
 
-69 automated tests pass (API, tools, RAG, plan graph, CI gate logic, latency alert logic, guardrails).
+71 automated tests pass (API, tools, RAG, plan graph, CI gate logic, latency alert logic, guardrails, MCP).
 
 ## 3. Guardrail validation
 
@@ -53,8 +53,8 @@ Limit: the guardrails are pattern lists. A rephrased attack can get past them an
 | D-3 | P2 | The tuned v2 prompt lowered faithfulness (+10.0% vs +14.5%) | G-3 re-evaluation | Closed: tuning reverted, result recorded |
 | D-4 | P2 | Docker image copied files by name, so a new module would be missing in the container | review | Fixed: `guardrails.py` added to the Dockerfile |
 | D-5 | Open | Only 2 of 4 RAGAS metrics reach +15% (G-3), and the baseline used is our own v1, not the Phase 1 Wk 9 scores | RAGAS | Open: to be agreed with the tech lead |
-| D-7 | Open | Bedrock is not available on the AWS account, so Groq stands in for Bedrock (model calls, Fission function) | setup | Open: switch when quota is granted |
 | D-6 | Open | Guardrails rely on patterns and can be bypassed by rephrasing | guardrail run | Open: move to Bedrock Guardrails once available |
+| D-7 | Open | Bedrock is not available on the AWS account, so Groq stands in for Bedrock (model calls, Fission function) | setup | Open: switch when quota is granted |
 
 ## 6. Retro notes
 
