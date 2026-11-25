@@ -1,7 +1,9 @@
 import os
 import json
 import secrets
+import sys
 from datetime import date
+from pathlib import Path
 from dotenv import load_dotenv
 from typing import AsyncIterator
 
@@ -12,6 +14,9 @@ from pydantic import BaseModel
 from strands import Agent
 from strands.models import BedrockModel
 from strands.models.litellm import LiteLLMModel
+from strands.tools.mcp import MCPClient
+from mcp import StdioServerParameters
+from mcp.client.stdio import stdio_client
 
 from guardrails import REFUSAL, check_input, clean_output
 from onboarding_tools import build_30_day_plan, get_access_checklist, make_plan, search_company_docs
@@ -86,11 +91,18 @@ class Assistant:
             max_tokens=self.max_tokens
         )
 
+    def init_tools(self):
+        if os.environ.get("USE_MCP") != "1":
+            return [build_30_day_plan, get_access_checklist, search_company_docs]
+        # shortcut: one server process per request, which loads the search index each time. Fine for a demo, share one server before real use
+        server = StdioServerParameters(command=sys.executable, args=[str(Path(__file__).parent / "mcp_docs_server.py")], env=dict(os.environ))   # env passed on, the MCP default drops most variables
+        return [build_30_day_plan, MCPClient(lambda: stdio_client(server))]   # the docs and access tools are found through MCP
+
     def init_agent(self):
         return Agent(
             model=self.init_llm_model(),
             system_prompt=self.system_prompt,
-            tools=[build_30_day_plan, get_access_checklist, search_company_docs],
+            tools=self.init_tools(),
             callback_handler=None  # stops it printing to the terminal
         )
 

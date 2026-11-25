@@ -76,3 +76,6 @@
 - docs/test-report.md has RAGAS scores, defect log, guardrail results, CI gate status and retro notes. Sign-off table is blank on purpose.
 - Left for people: tech lead review, QA and stakeholder signatures, the retro session, the Verisk stakeholder review. Box auto-stops 2 h after start.
 
+
+- Wk 4 MCP example (2026-11-26): backend/mcp_docs_server.py exposes search_company_docs and get_access_checklist over MCP. With USE_MCP=1 the Strands agent discovers and calls them through MCPClient (off by default, deployed API unchanged). Tests in test_mcp.py, live check with Groq passed, notes in docs/mcp-notes.md. The Fission welcome function already calls Groq (stand-in for Bedrock) with an HTTP trigger and a measured cold start (docs/cold-start.csv), so no change was needed there.
+
