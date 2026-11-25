@@ -57,3 +57,11 @@
 - Needs GitHub secrets: GROQ_API_KEY, LANGFUSE_PUBLIC_KEY, LANGFUSE_SECRET_KEY, LANGFUSE_BASE_URL.
 - Still to do: p50/p95 + cost dashboard in Langfuse (manual), degraded-prompt PR demo, Docker build/push in CI.
 
+
+### G-4 results (2026-11-25)
+- PR #1 (milestone-4 into milestone-3): RAG quality gate passed in 10 min.
+- PR #2 (demo/degraded-prompt into milestone-4, prompt told to ignore the context): the gate failed after 11 min, so the PR is blocked. Not merged, kept as the demo.
+- Baseline (Groq judge, 6 questions): faithfulness 1.0, answer_relevancy 0.742, context_precision 1.0, context_recall 1.0.
+- p95 alert tested: 0.5 s limit fires (p95 1.34 s on 157 traces), 30 s limit passes. Langfuse cost widget shows $0.00 because Groq free-tier models have no price.
+- Docker: CI builds the image (docker-build.yml). Push to ECR stays manual to avoid AWS keys in GitHub.
+
