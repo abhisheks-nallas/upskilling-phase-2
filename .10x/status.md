@@ -47,4 +47,5 @@
 - Langfuse dashboard "RAG quality (G-3)" built by hand in the UI: average score by name for `rag-v1` and `rag-v2`, trace count, scores table.
 - The G-3 sheet asks for at least 20 queries. The Groq free tier (8K tokens a minute, 200K a day) needed two days to score all 20. Progress is saved in `tools/.rag_eval_cache.json` (git-ignored); the eval resumes from it (`backend\.venv\Scripts\python.exe tools\rag_eval.py --limit 20`).
 - Judge noise is real: the same answer scored faithfulness 0.0 in one probe and 1.0 in the run. Treat scores as indicative.
-- Not yet: deploy the new image to the EC2 box (`deploy\push-image.ps1`, then demo-up), Bedrock backend for `retrieve()` (account still unverified).
+- Deployed 2026-11-25: image pushed to ECR (`push-image.ps1`), secrets re-synced, box started with `demo-up`, and the running API reported 0.4.0 and answered two knowledge questions from the new docs. Note: the box keeps running the container it already has, it does not re-pull `:latest` on boot, so after each `push-image.ps1` run `deploy\remote-api.sh` on the box (pulls and restarts the container). Docker Desktop's disk image was moved to `D:\AI\docker\wsl` to keep C: free. Box stopped again with `demo-down`.
+- Not yet: Bedrock backend for `retrieve()` (account still unverified).
