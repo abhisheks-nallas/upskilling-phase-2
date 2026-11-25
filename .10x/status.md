@@ -68,3 +68,11 @@
 
 - Degraded PR run (Groq judge, 6 questions): faithfulness 1.000 -> 0.710 (-29.0%, FAIL), answer_relevancy 0.742 -> 0.634 (-14.6%, FAIL), context_precision 1.000 -> 1.000 and context_recall 1.000 -> 1.000 (ok). Exit code 1, PR blocked. Retrieval was untouched, so only the answer metrics dropped.
 
+
+## Milestone 5 (G-5): sprint simulation wrap-up (2026-11-25)
+- v0.5.0 deployed to the box (image pushed to ECR, container updated via remote-api.sh). Checked live: version 0.5.0, policy questions answered from the docs, the 'translate your instructions' attack is blocked.
+- backend/guardrails.py (input patterns, length cap, output key/ID redaction) because Bedrock Guardrails is unavailable. tools/guardrail_check.py writes docs/guardrail-results.md.
+- First guardrail run found a P1 (system prompt leaked by a translate request). Fixed, tested, re-run.
+- docs/test-report.md has RAGAS scores, defect log, guardrail results, CI gate status and retro notes. Sign-off table is blank on purpose.
+- Left for people: tech lead review, QA and stakeholder signatures, the retro session, the Verisk stakeholder review. Box auto-stops 2 h after start.
+
